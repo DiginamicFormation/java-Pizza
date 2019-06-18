@@ -1,4 +1,4 @@
-package objet;
+package dao;
 
 
 public class PizzaMemDao implements IPizzaDao {

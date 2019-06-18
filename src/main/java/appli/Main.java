@@ -2,15 +2,11 @@ package appli;
 
 import java.util.Scanner;
 
-import objet.Pizza;
-import objet.PizzaMemDao;
+import dao.Pizza;
+import dao.PizzaMemDao;
 
 
-
-
-
-
-public class PizzeriaAdminConsoleApp {
+public class Main {
 
 	
 	private static Scanner sc = new Scanner(System.in);
