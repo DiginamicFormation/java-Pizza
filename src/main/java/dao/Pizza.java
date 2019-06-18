@@ -63,7 +63,4 @@ public class Pizza
 		
 		return "Pizza [code=" + code + ", designation=" + designation + ", prix=" + prixFormate + "]"  + "\r\n" + "\r\n";
 	}
-	
-	
-	
 }
