@@ -1,14 +1,22 @@
 package appli;
 
 import java.util.ArrayList;
+import java.util.Collections;
+
 import java.util.List;
 import java.util.Scanner;
 
 import dao.Pizza;
 import dao.PizzaDao;
+import exception.DeletePizzaException;
+import exception.SavePizzaException;
+import exception.UpdatePizzaException;
+
+
 
 public class Main {
 
+	
 	private static Scanner sc = new Scanner(System.in);
 	
 	public static void main(String[] args) {
@@ -39,53 +47,80 @@ public class Main {
 			// affiche la liste des pizzas
 			if (value == 1) {
 			
-				System.out.println("Liste des pizzas:");
-				displayAllPizza(pizzaDao);
+				System.out.println("Affichage des pizzas:");
+				pizzaDao.displayAllPizza();
 				displayMenu();
 			}
 			// ajoute une nouvelle pizza
 			else if (value == 2)
 			{
-				System.out.println("Ajout d’une nouvelle pizza");
-				sc.nextLine();
-				System.out.println("Veuillez saisir le code");
-				code = sc.nextLine();
-				System.out.println("Veuillez saisir le nom (sans espace) :");
-				name = sc.nextLine();
-				System.out.println("Veuillez le prix:");
-				price = Double.valueOf(sc.nextLine());
-				Pizza newPizza = new Pizza(code, name, price);
-				pizzaDao.saveNewPizza(newPizza);
-				displayMenu();
+				try {
+					System.out.println("Ajout d’une nouvelle pizza");
+					sc.nextLine();
+					System.out.println("Veuillez saisir le code");
+					code = sc.nextLine();
+					System.out.println("Veuillez saisir le nom (sans espace) :");
+					name = sc.nextLine();
+					System.out.println("Veuillez le prix:");
+					price = Double.valueOf(sc.nextLine());
+					Pizza newPizza = new Pizza(code, name, price);
+					
+					pizzaDao.saveNewPizza(newPizza);
+				} 
+				catch (SavePizzaException e) {
+					System.out.println(e.getMessage());
+				}
+				finally
+				{
+					displayMenu();
+				}
 			}
 			// mise a jour d'une pizza	
 			else if (value == 3)
 			{
-				System.out.println("Mise à jour d’une pizza");
-				displayAllPizza(pizzaDao);
-				sc.nextLine();
-				System.out.println("Veuillez saisir le code de la pizza à modifier");
-				String oldCode = sc.nextLine();
-				System.out.println("Veuillez saisir le nouveau code");
-				code = sc.nextLine();
-				System.out.println("Veuillez saisir le nouveau nom (sans espace) :");
-				name = sc.nextLine();
-				System.out.println("Veuillez le nouveau prix:");
-				price = Double.valueOf(sc.nextLine());
-				pizzaDao.updatePizza(oldCode, new Pizza(code, name , price));
-				displayMenu();
+				try {
+					System.out.println("Mise à jour d’une pizza");
+					pizzaDao.displayAllPizza();
+					sc.nextLine();
+					System.out.println("Veuillez saisir le code de la pizza à modifier");
+					String oldCode = sc.nextLine();
+					System.out.println("Veuillez saisir le nouveau code");
+					code = sc.nextLine();
+					System.out.println("Veuillez saisir le nouveau nom (sans espace) :");
+					name = sc.nextLine();
+					System.out.println("Veuillez le nouveau prix:");
+					price = Double.valueOf(sc.nextLine());
+					
+					pizzaDao.updatePizza(oldCode, new Pizza(code, name , price));
+				}
+				catch (UpdatePizzaException e) {
+					System.out.println(e.getMessage());
+				}
+				finally
+				{
+					displayMenu();
+				}
 			}
 			// suppression d'une pizza
 			else if (value == 4)
 			{
-				System.out.println("Suppression d’une pizza");
-				displayAllPizza(pizzaDao);
-				sc.nextLine();
-				System.out.println("Veuillez saisir le code de la pizza à supprimer");
-				code = sc.nextLine();
 				
-				pizzaDao.deletePizza(code);
-				displayMenu();
+				try {
+					System.out.println("Suppression d’une pizza");
+					pizzaDao.displayAllPizza();
+					sc.nextLine();
+					System.out.println("Veuillez saisir le code de la pizza à supprimer");
+					code = sc.nextLine();
+					
+					pizzaDao.deletePizza(code);
+				}
+				catch (DeletePizzaException e) {
+					System.out.println(e.getMessage());
+				}
+				finally
+				{
+					displayMenu();
+				}
 			}
 			// demande de sortie du programme
 			else if (value == 99)
@@ -102,7 +137,7 @@ public class Main {
 	public static void displayMenu() {
 		String menu = "\r\n\r\n====================================="
 				+ "\r\n\r\n***** Pizzeria Administration *****\r\n" 
-				+ "1. Lister les pizzas\r\n"
+				+ "1. Afficher les pizzas\r\n"
 				+ "2. Ajouter une nouvelle pizza\r\n" 
 				+ "3. Mettre à jour une pizza\r\n" 
 				+ "4. Supprimer une pizza\r\n"
@@ -110,8 +145,14 @@ public class Main {
 				+ "=====================================\r\n\r\n";
 		
 		
-		System.out.println(menu);		
+		System.out.println(menu);
+		
+		
+		
 	}
+
+
+
 
 	public static void displayAllPizza(PizzaDao pizzaDao)
 	{

@@ -3,91 +3,170 @@ package dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import exception.DeletePizzaException;
+import exception.SavePizzaException;
+import exception.StockageException;
+import exception.UpdatePizzaException;
+
+
 public class PizzaDao implements IPizzaDao {
-
-	private List<Pizza> listPizza = null;
 	
+	private List<Pizza> pizzas = null;
 	
-	public PizzaDao() {
-		super();
-
-		listPizza = new ArrayList<Pizza>();
+	public PizzaDao()
+	{
+		pizzas = new ArrayList<Pizza>();
 		
-		listPizza.add(new Pizza("MAR", "Margarita", 6.20F));
-		listPizza.add(new Pizza("MER", "Merguez", 8.10F));
-		listPizza.add(new Pizza("FRO", "Formages", 7.20F));
-		listPizza.add(new Pizza("DYN", "Dynamite", 8.20F));
-		
+		pizzas.add(new Pizza("PEP", "Pépéroni", 12.50));
+		pizzas.add(new Pizza("MAR", "Margherita", 14.00));
+		pizzas.add(new Pizza("REIN", "La Reine", 11.50));	
+		pizzas.add(new Pizza("FRO", "La 4 fromages", 12.00));
+		pizzas.add(new Pizza("CAN", "La cannibale", 12.50));
+		pizzas.add(new Pizza("ORI","L'orientale", 13.50));
+		pizzas.add(new Pizza("IND", "L'indienne", 14.00));
 	}
-
 	
-	public List<Pizza> findAllPizzas() {
-		
-		return listPizza;
+
+
+
+
+
+	public List<Pizza> findAllPizzas()
+	{
+		return pizzas;
 	}
 
-	public void saveNewPizza(Pizza pizza) {
-		listPizza.add(pizza);
-		
-	}
 
-	public void updatePizza(String codePizza, Pizza pizza) {
-		Pizza pizzaOld = findPizzaByCode(codePizza);
+
+	public void saveNewPizza(Pizza pizza) throws SavePizzaException {
 		
-		if (pizzaOld != null)
+		try 
 		{
-			listPizza.remove(pizzaOld);
-			listPizza.add(pizza);
-		}
-		
-	}
-
-	public void deletePizza(String codePizza) {
-		Pizza pizza = findPizzaByCode(codePizza);
-		
-		if (pizza != null)
+			pizza.dataControl();
+			pizzas.add(pizza);
+		} 
+		catch (StockageException e)
 		{
-			listPizza.remove(pizza);
-		}
-		
-	}
-
-	public Pizza findPizzaByCode(String codePizza) {
-
-		boolean trouveP = false;
-		Pizza result = null;
-		
-		for (int i = 0; i < listPizza.size() && !trouveP; i++) 
-		{
-			Pizza pizza = listPizza.get(i);
+			String message = "CREATION DE LA PIZZA => " + pizza.toString() + "\r\n";
+			message += e.getMessage();
 			
-			if (pizza.getCode().equalsIgnoreCase(codePizza))
+			throw new SavePizzaException(message);
+		}
+		
+		
+	}
+
+
+
+	public boolean pizzaExists(String codePizza) {
+		
+		for (Pizza pizza : pizzas)
+		{
+			if (pizza.getCode().equals(codePizza))
 			{
-				trouveP = true;
-				
-				result = pizza;				
+				return true;
 			}
 		}
 		
-		return result;
+		return false;
 	}
 
-	public boolean pizzaExists(String codePizza) {
-
-		Pizza pizza = findPizzaByCode(codePizza);
+	public void updatePizza(String codePizza, Pizza pizza) throws UpdatePizzaException {
 		
-		return pizza != null;
-	}
-	
-	public String toString() {
-		
-		String result = new String();
-		
-		for (Pizza pizza : listPizza) {
-			result += pizza.toString() + "\r\n";
+		boolean trouveP = false;
+		try 
+		{
+			pizza.dataControl();
+			
+			for (int i = 0; i < pizzas.size(); i++)
+			{
+				Pizza pizzaTmp = pizzas.get(i);
+				
+				if (pizzaTmp.getCode().equals(codePizza))
+				{
+					trouveP = true;
+					pizzas.set(i, pizza);
+				}
+			}
+		} 
+		catch (StockageException e)
+		{
+			String message = "MODIFICATION DE LA PIZZA => " + pizza.toString() + "\r\n";
+			message += e.getMessage();
+			
+			throw new UpdatePizzaException(message);
 		}
 		
-		return result + "\r\n" + "\r\n";
+		if (trouveP == false)
+		{
+			String message = "MODIFICATION DE LA PIZZA => " + codePizza + "\r\n";
+			message += "La pizza à modifier n'existe pas";
+			
+			throw new UpdatePizzaException(message);
+		}
+		
+
+	}
+
+
+	public void deletePizza(String codePizza) throws DeletePizzaException {
+		
+		
+		boolean trouveP = false;
+		for (int i = 0; i < pizzas.size(); i++)
+		{
+			Pizza pizzaTmp = pizzas.get(i);
+			
+			if (pizzaTmp.getCode().equals(codePizza))
+			{
+				trouveP = true;
+				pizzas.remove(i);
+			}
+		}
+		
+		if (trouveP == false)
+		{
+			String message = "SUPPRESSION DE LA PIZZA => " + codePizza + "\r\n";
+			message += "La pizza à supprimer n'existe pas";
+			
+			throw new DeletePizzaException(message);
+		}
+		
+	}
+
+
+	public Pizza findPizzaByCode(String codePizza) {
+
+
+		for (int i = 0; i < pizzas.size(); i++)
+		{
+			Pizza pizzaTmp = pizzas.get(i);
+			
+			if (pizzaTmp.getCode().equals(codePizza))
+			{
+				return pizzaTmp;
+			}
+		}
+		
+		return null;
+		
+	}
+	
+	public void displayAllPizza() {
+
+		for (Pizza pizza : pizzas) {
+			System.out.println(pizza.toString());
+
+		}
+	}
+
+	
+	public static void displayAllPizza(List<Pizza> pizzas) {
+
+		for (Pizza pizza : pizzas) {
+			System.out.println(pizza.toString());
+
+		}
 	}
 
 }
