@@ -1,19 +1,19 @@
 package appli;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import dao.Pizza;
-import dao.PizzaMemDao;
-
+import dao.PizzaDao;
 
 public class Main {
 
-	
 	private static Scanner sc = new Scanner(System.in);
 	
 	public static void main(String[] args) {
 		
-		PizzaMemDao pizzaMemDao = new PizzaMemDao();
+		PizzaDao pizzaDao = new PizzaDao();
 		
 		//pour mettre fin au programme
 		boolean stopP = false;
@@ -40,7 +40,7 @@ public class Main {
 			if (value == 1) {
 			
 				System.out.println("Liste des pizzas:");
-				pizzaMemDao.displayAllPizza();
+				displayAllPizza(pizzaDao);
 				displayMenu();
 			}
 			// ajoute une nouvelle pizza
@@ -55,14 +55,14 @@ public class Main {
 				System.out.println("Veuillez le prix:");
 				price = Double.valueOf(sc.nextLine());
 				Pizza newPizza = new Pizza(code, name, price);
-				pizzaMemDao.addPizza(newPizza);
+				pizzaDao.saveNewPizza(newPizza);
 				displayMenu();
 			}
 			// mise a jour d'une pizza	
 			else if (value == 3)
 			{
 				System.out.println("Mise à jour d’une pizza");
-				pizzaMemDao.displayAllPizza();
+				displayAllPizza(pizzaDao);
 				sc.nextLine();
 				System.out.println("Veuillez saisir le code de la pizza à modifier");
 				String oldCode = sc.nextLine();
@@ -72,19 +72,19 @@ public class Main {
 				name = sc.nextLine();
 				System.out.println("Veuillez le nouveau prix:");
 				price = Double.valueOf(sc.nextLine());
-				pizzaMemDao.updatePizza(oldCode, new Pizza(code, name , price));
+				pizzaDao.updatePizza(oldCode, new Pizza(code, name , price));
 				displayMenu();
 			}
 			// suppression d'une pizza
 			else if (value == 4)
 			{
 				System.out.println("Suppression d’une pizza");
-				pizzaMemDao.displayAllPizza();
+				displayAllPizza(pizzaDao);
 				sc.nextLine();
 				System.out.println("Veuillez saisir le code de la pizza à supprimer");
 				code = sc.nextLine();
 				
-				pizzaMemDao.deletePizza(code);
+				pizzaDao.deletePizza(code);
 				displayMenu();
 			}
 			// demande de sortie du programme
@@ -110,10 +110,14 @@ public class Main {
 				+ "=====================================\r\n\r\n";
 		
 		
-		System.out.println(menu);
-		
-		
-		
+		System.out.println(menu);		
 	}
 
+	public static void displayAllPizza(PizzaDao pizzaDao)
+	{
+		for (Pizza pizza : pizzaDao.findAllPizzas()) 
+		{
+			System.out.println(pizza.toString());
+		}
+	}
 }

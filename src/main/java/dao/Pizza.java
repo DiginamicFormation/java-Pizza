@@ -1,5 +1,8 @@
 package dao;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 public class Pizza
 {
 
@@ -54,7 +57,11 @@ public class Pizza
 
 	@Override
 	public String toString() {
-		return "Pizza [code=" + code + ", designation=" + designation + ", prix=" + prix + "]"  + "\r\n" + "\r\n";
+		
+		NumberFormat nf = new DecimalFormat("0.00");
+		String prixFormate = nf.format(prix);
+		
+		return "Pizza [code=" + code + ", designation=" + designation + ", prix=" + prixFormate + "]"  + "\r\n" + "\r\n";
 	}
 	
 	
